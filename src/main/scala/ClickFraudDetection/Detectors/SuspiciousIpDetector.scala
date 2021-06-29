@@ -1,0 +1,20 @@
+
+package ClickFraudDetection.Detectors
+
+import org.apache.flink.streaming.api.scala.DataStream
+import SuspiciousIpDetector.suspiciousIp
+import ClickFraudDetection.Event
+
+object SuspiciousIpDetector {
+    val suspiciousIp: String = "238.186.83.58"
+}
+
+// We noticed that 238.186.83.58 comes back a lot
+// checked on the internet and it seems unassigned
+// => probably a fraud
+
+case class SuspiciousIpDetector() {
+    def process(eventStream: DataStream[Event]): DataStream[Event] = {
+        eventStream.filter(_.ip == suspiciousIp)
+    }
+}
