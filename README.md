@@ -22,4 +22,4 @@
 ## Test1
 ### Description
 ### Results
-![alt text](https://github.com/IsraMekki/ClickFraudDetection/blob/master/res_common.png?raw=true)
+![alt text](https://github.com/IsraMekki/ClickFraudDetection/tree/master/res_common.png?raw=true)
