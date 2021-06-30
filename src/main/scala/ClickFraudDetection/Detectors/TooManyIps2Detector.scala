@@ -14,6 +14,7 @@ import scala.collection.mutable.ListBuffer
 // When a uid is associated with too many IP addresses
 // Implementation with KeyedProcessFunction
 
+//TODO: include time
 object TooManyIps2Detector {
     val maxIpPerUser: Int = 2
     val ONE_MINUTE: Long     = 60 * 1000L
