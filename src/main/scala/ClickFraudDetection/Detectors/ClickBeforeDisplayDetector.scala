@@ -1,5 +1,6 @@
 package ClickFraudDetection.Detectors
 
+
 package org.myorg.quickstart
 import org.apache.flink.shaded.jackson2.com.fasterxml.jackson.databind.JsonNode
 import org.apache.flink.streaming.api.scala._
@@ -12,23 +13,35 @@ object ClickBeforeDisplayDetector {
 
   def build(
              clicks: DataStream[JsonNode],
-             windowSize: Long): Unit = {
+             displays: DataStream[JsonNode],
+             windowSize: Long,
+             tolerated_time_diff: Long): Unit = {
 
-    //with a restrictive time window of 2 seconds and a minimum nb of clicks per uid equal to more or less 3
-    //we get some fraudulent clicks
+    //with window size equal to 10 seconds and tolerance to 5: mostly 238.186.83.58 appears as fraudulents, but there's others to,
+    //sometimes it takes time for these fraudulent events to appear, they seem to be rare compared to other found with previous filters
+    //same with window size of 5 seconds
 
-    //Pattern 1 :
-    //on the [[Clicks]] queue, if more than 5 clicks occur from the same [[uid]] dans une tumbling window id.
-    val clicks_by_uid: DataStream[(JsonNode, Int)] = clicks
-      .map {
-        (_, 1)
-      }
-      .keyBy(d => d._1.get("uid").asText())
+    //Pattern 2 :
+    //si par impression id, par uid,
+    //un click apparait tout seul dans son coin sans display autour (10 secondes avant ou après) fraude
+    val clicks_by_uid_imp : KeyedStream[JsonNode,(String,String)]= clicks
+      .keyBy(d => (d.get("uid").asText(),d.get("impressionId").asText()))
+
+    val displays_by_uid_imp : KeyedStream[JsonNode,(String,String)] = displays
+      .keyBy(d => (d.get("uid").asText(),d.get("impressionId").asText()))
+
+    //they look like fraud because clicks appear near displays and it always seem to be the same ip adress
+    val fraud_joined: DataStream[(JsonNode,JsonNode)] = clicks_by_uid_imp.join(displays_by_uid_imp)
+      .where(c => (c.get("uid").asText(),c.get("impressionId").asText())).equalTo(d => (d.get("uid").asText(),d.get("impressionId").asText()))
       .window(TumblingEventTimeWindows.of(Time.seconds(windowSize)))
-      .reduce { (v1, v2) => (v1._1, v1._2 + v2._2) }
-    val uid_fraud_clicks = (clicks_by_uid filter (c => (c._2 >= 3) )) // in 5 seconds more than 2 clicks, i have seen 4
+      .apply { (e1, e2) => (e1, e2) }
+    //fraud_joined.print()
 
-    uid_fraud_clicks.print()
+    val filtered_fraud_joined = fraud_joined filter (t => t._1.get("timestamp").asLong() < (t._2.get("timestamp").asLong() - tolerated_time_diff))
+    val fraud_clicks : DataStream[JsonNode] = filtered_fraud_joined.map{ d => (d._1)}
+
+    //fraud_clicks.print()
 
   }
 }
+
