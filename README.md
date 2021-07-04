@@ -30,9 +30,4 @@ Our implementation can be found in [ClickFraudDetection](../blob/master/master/s
 * **ClickFraudDetectionJob** main class where the program is launched.
 * TODO **CTRCalculator** allows to calculate the Click Through Rate from clicks and displays streams.
 * **Detectors** contains classes where our filters are implemented. Each class takes as input a DataStream of Event and gives as output a DataStream of **cleaned** Events. The fraudulant ones are written into a text file.
-[comment]: <> (
-# Results
-## Test1
-### Description
-### Results
-![alt text](https://github.com/IsraMekki/ClickFraudDetection/blob/master/test_results/res_common.png?raw=true))
+
