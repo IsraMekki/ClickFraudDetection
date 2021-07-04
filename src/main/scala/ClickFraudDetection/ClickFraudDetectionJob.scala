@@ -18,14 +18,17 @@
 
 package ClickFraudDetection
 
-import ClickFraudDetection.Detectors.TooManyIps2Detector
+import ClickFraudDetection.Detectors.{ClickBeforeDisplayDetector, SuspiciousIpDetector, TooManyClicksDetector, TooManyIps2Detector, TooManyIpsDetector}
 import org.apache.flink.api.common.serialization.SimpleStringSchema
 import org.apache.flink.core.fs.FileSystem.WriteMode
 import org.apache.flink.streaming.api.scala._
+import org.apache.flink.streaming.api.windowing.assigners.TumblingProcessingTimeWindows
+import org.apache.flink.streaming.api.windowing.time.Time
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer
-import ClickFraudDetection.Detectors.SuspiciousIpDetector
+import org.apache.flink.shaded.jackson2.com.fasterxml.jackson.databind.JsonNode
 
 import java.util.Properties
+import scala.util.parsing.json.JSON
 
 object ClickFraudDetectionJob {
     def main(args: Array[String]) {
@@ -37,21 +40,25 @@ object ClickFraudDetectionJob {
 
         val clickStream = env
                 .addSource(new FlinkKafkaConsumer[String]("clicks", new SimpleStringSchema(), properties))
+                .map(line => Event.create(line))
+                .assignTimestampsAndWatermarks(new WaterMarkAssigner)
 
-        //val fraudIpStream = SuspiciousIpDetector().process(
-        //    clickStream.map(line => Event.create(line)))
+        val displayStream = env
+                .addSource(new FlinkKafkaConsumer[String]("displays", new SimpleStringSchema(), properties))
+                .map(line => Event.create(line))
+                .assignTimestampsAndWatermarks(new WaterMarkAssigner)
 
-        //fraudIpStream.print()
+        val cleaned1 = SuspiciousIpDetector().process(clickStream)
+        val cleaned2 = TooManyClicksDetector.process(cleaned1)
+        val cleaned3 = TooManyIpsDetector().process(cleaned2)
+        //val cleaned3 = clickStream.keyBy(event => event.uid).process(new TooManyIps2Detector)
+        val cleaned4 = ClickBeforeDisplayDetector.process(cleaned3, displayStream, 5, 2)   //parameters to correct
 
-        val fraudTooManyIp = clickStream.map(line => Event.create(line))
-                .keyBy(event => event.uid)
-                .process(new TooManyIps2Detector).setParallelism(1)
+        cleaned4.writeAsText("CleanEvents")
 
-        //val fraudTooManyIp = TooManyIpsDetector().process(clickStream.map(line => Event.create(line)))
-        //fraudTooManyIp.writeAsText("too_many_ips", WriteMode.OVERWRITE).setParallelism(1)
+        //TODO: Calculate CTR https://www.ververica.com/blog/real-time-performance-monitoring-with-flink-sql-ad-tech-use-case
 
-        fraudTooManyIp.print()
 
-        env.execute("Flink Streaming Scala API Skeleton")
+        env.execute("Click Fraud Detection Job")
     }
 }

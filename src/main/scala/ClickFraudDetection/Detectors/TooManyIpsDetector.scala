@@ -19,15 +19,17 @@ case class TooManyIpsDetector() {
     def process(eventStream: DataStream[Event]): DataStream[Event] = {
         val eventStreamWaterMarked = eventStream.assignTimestampsAndWatermarks(new WaterMarkAssigner)
 
-        eventStreamWaterMarked.map(event => ((event.uid, event.ip), event, 1))
+        val processedEvents = eventStreamWaterMarked.map(event => ((event.uid, event.ip), event, 1))
                 .keyBy(_._1)
                 .window(TumblingEventTimeWindows.of(Time.minutes(windowSize)))
                 .reduce{ (x, y) => (x._1, x._2, 1) }
                 .keyBy(_._1._1)
                 .window(TumblingEventTimeWindows.of(Time.minutes(windowSize)))
                 .reduce{ (x, y) => (x._1, x._2, x._3 + y._3) }
-                .filter(_._3 > maxIpsPerUser)
-                .map(_._2)
+
+        processedEvents.filter(_._3 > maxIpsPerUser).map(_._2).writeAsText("TooManyIpsEvents")
+
+        processedEvents.filter(_._3 <= maxIpsPerUser).map(_._2)
 
     }
 }

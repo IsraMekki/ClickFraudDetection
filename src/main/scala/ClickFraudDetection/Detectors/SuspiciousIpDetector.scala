@@ -15,6 +15,8 @@ object SuspiciousIpDetector {
 
 case class SuspiciousIpDetector() {
     def process(eventStream: DataStream[Event]): DataStream[Event] = {
-        eventStream.filter(_.ip == suspiciousIp)
+        val suspiciousIpStream = eventStream.filter(_.ip == suspiciousIp)
+        suspiciousIpStream.writeAsText("SuspiciousIpEvents").setParallelism(1)
+        eventStream.filter(_.ip != suspiciousIp)
     }
 }

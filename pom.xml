@@ -16,9 +16,9 @@ under the License.
 		 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>   <groupId>clickFraudDetection</groupId>
-	<artifactId>quickstart</artifactId>
+	<artifactId>ClickFraudDetection</artifactId>
 	<version>0.1</version>
-	<packaging>jar</packaging>   <name>Flink Quickstart Job</name>   <repositories>
+	<packaging>jar</packaging>   <name>Flink Click Fraud Detection Job</name>   <repositories>
 	<repository>
 		<id>apache.snapshots</id>
 		<name>Apache Development Snapshot Repository</name>
