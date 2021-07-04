@@ -31,3 +31,8 @@ Our implementation can be found in [ClickFraudDetection](../blob/master/master/s
 * TODO **CTRCalculator** allows to calculate the Click Through Rate from clicks and displays streams.
 * **Detectors** contains classes where our filters are implemented. Each class takes as input a DataStream of Event and gives as output a DataStream of **cleaned** Events. The fraudulant ones are written into a text file.
 
+# To run this project
+Run the main job in src/main/scala/ClickFraudDetection/ClickFraudDetectionJob.scala
+
+# What we learnt from this project
+
