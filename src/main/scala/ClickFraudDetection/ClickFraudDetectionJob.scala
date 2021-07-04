@@ -51,10 +51,10 @@ object ClickFraudDetectionJob {
         val cleaned1 = SuspiciousIpDetector().process(clickStream)
         val cleaned2 = TooManyClicksDetector.process(cleaned1)
         val cleaned3 = TooManyIpsDetector().process(cleaned2)
-        //val cleaned3 = clickStream.keyBy(event => event.uid).process(new TooManyIps2Detector)
+        //val cleaned3 = clickStream.keyBy(event => event.uid).process(new TooManyIps2Detector) TODO: adapt (or not)
         val cleaned4 = ClickBeforeDisplayDetector.process(cleaned3, displayStream, 5, 2)   //parameters to correct
 
-        cleaned4.writeAsText("CleanEvents")
+        cleaned4.writeAsText("CleanEvents").setParallelism(1)
 
         //TODO: Calculate CTR https://www.ververica.com/blog/real-time-performance-monitoring-with-flink-sql-ad-tech-use-case
 
