@@ -17,9 +17,7 @@ object TooManyIpsDetector {
 // => Probably bots ?
 case class TooManyIpsDetector() {
     def process(eventStream: DataStream[Event]): DataStream[Event] = {
-        val eventStreamWaterMarked = eventStream.assignTimestampsAndWatermarks(new WaterMarkAssigner)
-
-        val processedEvents = eventStreamWaterMarked.map(event => ((event.uid, event.ip), event, 1))
+        val processedEvents = eventStream.map(event => ((event.uid, event.ip), event, 1))
                 .keyBy(_._1)
                 .window(TumblingEventTimeWindows.of(Time.minutes(windowSize)))
                 .reduce{ (x, y) => (x._1, x._2, 1) }

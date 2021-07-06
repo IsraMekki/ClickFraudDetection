@@ -29,7 +29,7 @@ Our implementation can be found in [ClickFraudDetection](../blob/master/master/s
 * **WaterMarkAssigner** alows to create watermarks for event time processing based on timestamps in collected streams.
 * **ClickFraudDetectionJob** main class where the program is launched.
 * **CTRCalculator** allows to calculate the Click Through Rate from clicks and displays streams.
-* **Detectors** contains classes where our filters are implemented. Each class takes as input a DataStream of Event and gives as output a DataStream of **cleaned** Events. The fraudulant ones are written into a text file.
+* **Detectors** contains classes where our filters are implemented. Each class takes as input a (or 2) DataStream(s) of Event and gives as output a DataStream of **cleaned** Events. The fraudulant ones are written into a text file.
 
 # To run this project
 Run the main job in 
