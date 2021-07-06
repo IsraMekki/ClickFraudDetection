@@ -18,11 +18,13 @@ case class CTRCalculator() {
                 .map(x => (x, 1))
                 //.keyBy(c => (c._1.uid, c._1.impressionId))
                 .keyBy(c => c._1.uid)
+                //.window(TumblingEventTimeWindows.of(Time.minutes(windowSize)))
                 .reduce { (c1, c2) => (c1._1, c1._2 + c2._2) }
 
         val keyedDisplayStream = displayStream
                 .map(x => (x, 1))
                 .keyBy(d => d._1.uid)
+                //.window(TumblingEventTimeWindows.of(Time.minutes(windowSize)))
                 .reduce { (d1, d2) => (d1._1, d1._2 + d2._2) }
 
         // Join both keyed reduced streams to compute CTR by UID and impressionID during the defined time window
