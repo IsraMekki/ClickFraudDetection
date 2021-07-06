@@ -13,6 +13,6 @@ Detects when a user (uid) is associated with too many clicks in a short period o
 Detects when the click event happens before the display event, for the same uid and impressionId (+/- some tolerance threshold). 
 ### TooManyIpsDetector and TooManyIps2Detector
 Detects when a user (uid) is associated to too many IP addresses. We believe the inverse is normal (since there is no port number, the public IP address can be associated to as many users as the LAN can handle, a small LAN can have upp to 254 users). However, when a uid has too many IP addresses, it either means that the user is connected to a lot of devices and each device is connected to a different network (very unlikely for more than 2-3 IPs), or, it's a fraud. We suggest two implementations of this filter: TooManyClicksDetector is a Map-Reduce based filter, and TooManyIps2Detector, inspired by [this](https://ci.apache.org/projects/flink/flink-docs-master/docs/try-flink/datastream/) article, uses KeyedProcessFunctions.
-The problem with the second implementation is that it misses fraudulant events. Since the counter of frauds is reset to 0 each time maxIpsPerUser is reached, 1/maxIpsPerUser of the faudulant events are missed.
+The problem with the second implementation is that it misses fraudulent events. Since the counter of frauds is reset to 0 each time maxIpsPerUser is reached, 1/maxIpsPerUser of the fraudulent events are missed.
 
 ## CTRCalculator
