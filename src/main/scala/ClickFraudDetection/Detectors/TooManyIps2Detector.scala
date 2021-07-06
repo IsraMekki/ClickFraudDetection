@@ -45,7 +45,6 @@ class TooManyIps2Detector extends KeyedProcessFunction[String, Event, Event] {
                                        context: KeyedProcessFunction[String, Event, Event]#Context,
                                        collector: Collector[Event]): Unit = {
 
-        // Get the current state for the current key
         val prevIPs = new ListBuffer[String]()
         var nextNullPos = maxIpPerUser
         breakable{
@@ -58,19 +57,12 @@ class TooManyIps2Detector extends KeyedProcessFunction[String, Event, Event] {
             }
         }
 
-        // Check if the flag is set
         if (nextNullPos == maxIpPerUser) {
             if (!prevIPs.contains(event.ip)){
-                // Output an alert downstream
                 val problematicEvent = event
 
                 collector.collect(problematicEvent)
             }
-            // Clean up our state
-            cleanUp(context)
-            nextNullPos = 0
-
-
         }
 
 
@@ -89,23 +81,10 @@ class TooManyIps2Detector extends KeyedProcessFunction[String, Event, Event] {
                                 timestamp: Long,
                                 ctx: KeyedProcessFunction[String, Event, Event]#OnTimerContext,
                                 out: Collector[Event]): Unit = {
-        // remove flag after 1 minute
+
         timerState.clear()
         for( i <- 0 until maxIpPerUser){
             prevIpStates(i).clear()
         }
+        nextNullPos = 0
     }
-
-    @throws[Exception]
-    private def cleanUp(ctx: KeyedProcessFunction[String, Event, Event]#Context): Unit = {// delete timer
-        val timer = timerState.value
-        ctx.timerService.deleteEventTimeTimer(timer)
-
-        // clean up all states
-        timerState.clear()
-
-        for( i <- 0 until maxIpPerUser){
-            prevIpStates(i).clear()
-        }
-    }
-}
