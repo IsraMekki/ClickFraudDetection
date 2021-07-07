@@ -36,6 +36,8 @@ Run the main job in
 ```
 src/main/scala/ClickFraudDetection/ClickFraudDetectionJob.scala
 ```
+# Results 
+
 
 # What we learnt from this project
 * Introduction to the Pay-Per Click model (PPC)
