@@ -8,7 +8,7 @@ This architecture however has some serious issues:
 * Although we thought the arcitecture was simple, it is, in fact, complex since components need to interact with each other. When one detector goes bad, it is quite difficult to track things down and find the problem.
 * The use of sliding windows in some detectors might have been useful to detect more frauds. However, with this pipeline, we ended up with duplicates which was bad for our analysis.
 * We did not know if we needed to filter both clicks and displays or clicks only. For sake of simplicity, we opted for the second alternative.
-* We also noticed that the ClickBeforeDisplay detector does nothing. This pattern is redundent with the first one (suspiciousIp), so we dicided to discard it.
+* We also noticed that the ClickBeforeDisplay detector does nothing. This pattern is redundent with the first one (suspiciousIp), so we decided to discard it.
 
 This resulted in the following pipeline. It still needs to be improved, but it has better performance then the naive one.
 ![Main job overview](https://github.com/IsraMekki/ClickFraudDetection/blob/master/test_results/CFD_new.png?raw=true)
