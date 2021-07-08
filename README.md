@@ -41,7 +41,7 @@ Our principal metric was the CTR by UID. We ran de click fraud detection job for
 
 | CTR_UID_NO_PROCESSING | CTR_UID_POST_PROCESSING |
 |-----------------------|-------------------------|
-| 0.2                   | 0.2                     |
+| 79.33%                | 15.37%                  |
 
 # What we learnt from this project
 * Introduction to the Pay-Per Click model (PPC)
