@@ -30,7 +30,7 @@ This analysis allowed us to extract probable patterns, which we ended up impleme
 ## Scala files
 Our implementation can be found in [ClickFraudDetection](../master/src/main/scala/ClickFraudDetection/).
 * **Event** is a class which converts Strings to objects with meaningful properties (eventType, uid, timestamp, ip and impressionId) with the correct types. We work with Streams of Events to simplify our implementation.
-* **WaterMarkAssigner** alows to create watermarks for event time processing based on timestamps in collected streams.
+* **WaterMarkAssigner** creates watermarks for event time processing based on timestamps present in the collected stream events.
 * **ClickFraudDetectionJob** main class where the program is launched.
 * **CTRCalculator** allows to calculate the Click Through Rate from clicks and displays streams.
 * **Detectors** contains classes where our filters are implemented. Each class takes as input a (or 2) DataStream(s) of Event and gives as output a DataStream of **cleaned** Events. The fraudulant ones are written into a text file.
