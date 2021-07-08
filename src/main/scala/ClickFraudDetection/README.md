@@ -28,4 +28,4 @@ Detects when a user (uid) is associated to too many IP addresses. We believe the
 **NB.** we did not adapt the second implementation to our pipeline, it simply streams fraudulent events.
 
 ## CTRCalculator
-Takes as input two strams (clicks and displays) and calculates the CTR by UID (coud be adapted to other dimensions but we stuck with UID)
+Takes as input two strams (clicks and displays) and calculates the CTR by UID (coud be adapted to other dimensions but we stuck to UID).
