@@ -1,5 +1,5 @@
 # Contents
-This project is structured as follows:
+The main parts of this project are structured as follows:
 ```
 |_README.md
 |_offline_analysis.ipynb
@@ -15,9 +15,13 @@ This project is structured as follows:
                                 |_ClickFraudDetectionJob.scala
                                 |_Event.scala
                                 |_WaterMarkAssigner.scala
+                                |_CTRCalculator.scala
+                                |_README.md
 |_test_results
-              |image.jpg
-              |_...
+              |cliks
+              |_displays
+              |_CTR_UID_NO_PROCESSING
+              |_CTR_UID_POST_PROCESSING
 ```
 
 ## Offline analysis
