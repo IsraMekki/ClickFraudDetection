@@ -1,8 +1,9 @@
 package ClickFraudDetection.Detectors
 
 import ClickFraudDetection.Event
+import org.apache.flink.core.fs.FileSystem.WriteMode
 import org.apache.flink.streaming.api.scala._
-import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows
+import org.apache.flink.streaming.api.windowing.assigners.{SlidingEventTimeWindows, TumblingEventTimeWindows}
 import org.apache.flink.streaming.api.windowing.time.Time
 
 case class TooManyClicksDetector()
@@ -27,7 +28,7 @@ object TooManyClicksDetector {
                 .reduce { (v1, v2) => (v1._1, v1._2 + v2._2) }
         val uid_fraud_clicks = (clicks_by_uid filter (c => (c._2 >= maxClicks))) // in 5 seconds more than 2 clicks, i have seen 4
 
-        uid_fraud_clicks.map(e => e._1).writeAsText("TooManyClicksEvents").setParallelism(1)
+        uid_fraud_clicks.map(e => e._1).writeAsText("TooManyClicksEvents-" + clicks.name, writeMode = WriteMode.OVERWRITE).setParallelism(1)
         val uid_clean_clicks = clicks_by_uid filter (c => (c._2 < maxClicks))
         uid_clean_clicks.map(x => x._1)
 

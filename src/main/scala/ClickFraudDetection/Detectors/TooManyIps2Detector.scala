@@ -86,6 +86,5 @@ class TooManyIps2Detector extends KeyedProcessFunction[String, Event, Event] {
         for( i <- 0 until maxIpPerUser){
             prevIpStates(i).clear()
         }
-        //nextNullPos = 0, si non ca reconnait pas variable : Amaya la commente
     }
 }

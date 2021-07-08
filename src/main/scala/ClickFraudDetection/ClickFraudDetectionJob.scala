@@ -42,24 +42,31 @@ object ClickFraudDetectionJob {
                 .addSource(new FlinkKafkaConsumer[String]("clicks", new SimpleStringSchema(), properties))
                 .map(line => Event.create(line))
                 .assignTimestampsAndWatermarks(new WaterMarkAssigner)
+                .name("clicks")
 
         val displayStream = env
                 .addSource(new FlinkKafkaConsumer[String]("displays", new SimpleStringSchema(), properties))
                 .map(line => Event.create(line))
                 .assignTimestampsAndWatermarks(new WaterMarkAssigner)
+                .name("displays")
 
-       /* val cleaned1 = SuspiciousIpDetector().process(clickStream)
-        val cleaned2 = TooManyClicksDetector.process(cleaned1)
-        val cleaned3 = TooManyIpsDetector().process(cleaned2)
+        val cleanedClicks1 = SuspiciousIpDetector().process(clickStream).name("clicks1")
+        val cleanedDisplays1 = SuspiciousIpDetector().process(displayStream).name("displays1")
+
+        val cleanedClicks2 = TooManyClicksDetector.process(cleanedClicks1).name("clicks2")
+
+        val cleanedClicks3 = TooManyIpsDetector().process(cleanedClicks2).name("clicks3")
+        val cleanedDisplays3 = TooManyIpsDetector().process(displayStream).name("displays3")
+
         //val cleaned3 = clickStream.keyBy(event => event.uid).process(new TooManyIps2Detector) TODO: adapt (or not)
-        val cleaned4 = ClickBeforeDisplayDetector.process(cleaned3, displayStream, 5, 2)   //parameters to correct
+        val cleanedClicks4 = ClickBeforeDisplayDetector.process(cleanedClicks3, cleanedDisplays3, 5, 2)
 
-        cleaned4.writeAsText("CleanEvents").setParallelism(1)*/
+        //cleaned4.writeAsText("CleanEvents", WriteMode.OVERWRITE).setParallelism(1)
 
 
-        val ctr = CTRCalculator().getCTR(clickStream, displayStream)
+        cleanedClicks3.writeAsText("lol", WriteMode.OVERWRITE).setParallelism(1)
+        val ctr = CTRCalculator().getCTR(cleanedClicks3, cleanedDisplays3)
         ctr.print()
-
         env.execute("Click Fraud Detection Job")
     }
 }

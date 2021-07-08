@@ -4,6 +4,8 @@ package ClickFraudDetection.Detectors
 import org.apache.flink.streaming.api.scala.DataStream
 import SuspiciousIpDetector.suspiciousIp
 import ClickFraudDetection.Event
+import org.apache.flink.core.fs.FileSystem.WriteMode
+
 
 object SuspiciousIpDetector {
     val suspiciousIp: String = "238.186.83.58"
@@ -16,7 +18,7 @@ object SuspiciousIpDetector {
 case class SuspiciousIpDetector() {
     def process(eventStream: DataStream[Event]): DataStream[Event] = {
         val suspiciousIpStream = eventStream.filter(_.ip == suspiciousIp)
-        suspiciousIpStream.writeAsText("SuspiciousIpEvents").setParallelism(1)
+        suspiciousIpStream.writeAsText("SuspiciousIpEvents-" + eventStream.name, writeMode = WriteMode.OVERWRITE).setParallelism(1)
         eventStream.filter(_.ip != suspiciousIp)
     }
 }

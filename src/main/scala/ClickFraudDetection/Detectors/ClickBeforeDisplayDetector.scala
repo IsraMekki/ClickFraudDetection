@@ -2,6 +2,7 @@ package ClickFraudDetection.Detectors
 
 
 import ClickFraudDetection.Event
+import org.apache.flink.core.fs.FileSystem.WriteMode
 import org.apache.flink.streaming.api.scala._
 import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindows
 import org.apache.flink.streaming.api.windowing.time.Time
@@ -29,7 +30,8 @@ object ClickBeforeDisplayDetector {
     val displays_by_uid_imp : KeyedStream[Event, (String,String)] = displays
       .keyBy(d => (d.uid, d.impressionId))
 
-    //they look like fraud because clicks appear near displays and it always seem to be the same ip adress
+    //they look like fraud because clicks appear near displays
+    // NB. It always seems to be the same ip address (the one we filtered in suspiciousIpDetector)
     val fraud_joined: DataStream[(Event,Event)] = clicks_by_uid_imp.join(displays_by_uid_imp)
       .where(c => (c.uid,c.impressionId)).equalTo(d => (d.uid,d.impressionId))
       .window(TumblingEventTimeWindows.of(Time.seconds(windowSize)))
@@ -38,12 +40,11 @@ object ClickBeforeDisplayDetector {
 
     val filtered_fraud_joined = fraud_joined filter (t => t._1.timestamp < (t._2.timestamp - tolerated_time_diff))
     //val fraud_clicks : DataStream[Event] = filtered_fraud_joined.map{ d => (d._1)}
-    filtered_fraud_joined.map{ d => (d._1)}.writeAsText("ClickBeforeDisplayEvents").setParallelism(1)
+    filtered_fraud_joined.map{ d => (d._1)}.writeAsText("ClickBeforeDisplayEvents", writeMode = WriteMode.OVERWRITE).setParallelism(1)
 
     val filtered_clean_joined = fraud_joined filter (t => t._1.timestamp >= (t._2.timestamp - tolerated_time_diff))
     filtered_clean_joined.map(d => d._1)
 
-    //fraud_clicks.print()
 
   }
 }
