@@ -18,14 +18,11 @@
 
 package ClickFraudDetection
 
-import ClickFraudDetection.Detectors.{ClickBeforeDisplayDetector, SuspiciousIpDetector, TooManyClicksDetector, TooManyIps2Detector, TooManyIpsDetector}
 import org.apache.flink.api.common.serialization.SimpleStringSchema
+import ClickFraudDetection.Detectors.{ClickBeforeDisplayDetector, SuspiciousIpDetector, TooManyClicksDetector, TooManyIps2Detector, TooManyIpsDetector}
 import org.apache.flink.core.fs.FileSystem.WriteMode
 import org.apache.flink.streaming.api.scala._
-import org.apache.flink.streaming.api.windowing.assigners.TumblingProcessingTimeWindows
-import org.apache.flink.streaming.api.windowing.time.Time
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer
-import org.apache.flink.shaded.jackson2.com.fasterxml.jackson.databind.JsonNode
 
 import java.util.Properties
 import scala.util.parsing.json.JSON
@@ -51,22 +48,20 @@ object ClickFraudDetectionJob {
                 .name("displays")
 
         val cleanedClicks1 = SuspiciousIpDetector().process(clickStream).name("clicks1")
-        val cleanedDisplays1 = SuspiciousIpDetector().process(displayStream).name("displays1")
+        //val cleanedDisplays1 = SuspiciousIpDetector().process(displayStream).name("displays1")
 
         val cleanedClicks2 = TooManyClicksDetector.process(cleanedClicks1).name("clicks2")
 
         val cleanedClicks3 = TooManyIpsDetector().process(cleanedClicks2).name("clicks3")
-        val cleanedDisplays3 = TooManyIpsDetector().process(displayStream).name("displays3")
+        //val cleanedDisplays3 = TooManyIpsDetector().process(displayStream).name("displays3")
 
-        //val cleaned3 = clickStream.keyBy(event => event.uid).process(new TooManyIps2Detector) TODO: adapt (or not)
-        val cleanedClicks4 = ClickBeforeDisplayDetector.process(cleanedClicks3, cleanedDisplays3, 5, 2)
+        //val cleanedClicks4 = ClickBeforeDisplayDetector.process(cleanedClicks3, cleanedDisplays3, 5, 2)
 
-        //cleaned4.writeAsText("CleanEvents", WriteMode.OVERWRITE).setParallelism(1)
+        val ctr = CTRCalculator().getCTR(cleanedClicks3, displayStream)
+        ctr.writeAsText("CTR_UID_POST_PROCESSING").setParallelism(1)
 
-
-        cleanedClicks3.writeAsText("lol", WriteMode.OVERWRITE).setParallelism(1)
-        val ctr = CTRCalculator().getCTR(cleanedClicks3, cleanedDisplays3)
-        ctr.print()
+        val ctr_before = CTRCalculator().getCTR(clickStream, displayStream)
+                .writeAsText("CTR_UID_NO_PROCESSING").setParallelism(1)
         env.execute("Click Fraud Detection Job")
     }
 }
