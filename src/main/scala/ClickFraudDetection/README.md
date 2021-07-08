@@ -1,5 +1,5 @@
 ## Overview of the main Job
-The following figure depicts our naive pipeline for dealing with the problem. We designed the main job so that it uses the implemented detectors one after another. Each detector takes as input a stream containing fraudulent Events and outputs fraud free (w.r.t the pattern it filters) Event streams. The latter become inputs to the next detector, etc.
+The following figure depicts our naive pipeline for dealing with the problem. We designed the main job so that it uses the implemented detectors one after another. Each detector takes as input a stream containing fraudulent Events and outputs fraud free (w.r.t to the pattern it filters) Event streams. The latter become inputs to the next detector, etc.
 The order of detectors was chosen based on each pattern's frequency.
 ![Main job overview](https://github.com/IsraMekki/ClickFraudDetection/blob/master/test_results/CFD.png?raw=true)
 
