@@ -40,7 +40,7 @@ object ClickBeforeDisplayDetector {
 
     val filtered_fraud_joined = fraud_joined filter (t => t._1.timestamp < (t._2.timestamp - tolerated_time_diff))
     //val fraud_clicks : DataStream[Event] = filtered_fraud_joined.map{ d => (d._1)}
-    filtered_fraud_joined.map{ d => (d._1)}.writeAsText("ClickBeforeDisplayEvents", writeMode = WriteMode.OVERWRITE).setParallelism(1)
+    filtered_fraud_joined.map{ d => (d._1)}.writeAsText("frauds/ClickBeforeDisplayEvents", writeMode = WriteMode.OVERWRITE).setParallelism(1)
 
     val filtered_clean_joined = fraud_joined filter (t => t._1.timestamp >= (t._2.timestamp - tolerated_time_diff))
     filtered_clean_joined.map(d => d._1)

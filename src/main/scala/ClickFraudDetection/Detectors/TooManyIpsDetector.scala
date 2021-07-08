@@ -27,7 +27,7 @@ case class TooManyIpsDetector() {
                 .window(TumblingEventTimeWindows.of(Time.seconds(windowSize)))
                 .reduce{ (x, y) => (x._1, x._2, x._3 + y._3) }
 
-        processedEvents.filter(_._3 > maxIpsPerUser).map(_._2).writeAsText("TooManyIpsEvents-" + eventStream.name, writeMode = WriteMode.OVERWRITE).setParallelism(1)
+        processedEvents.filter(_._3 > maxIpsPerUser).map(_._2).writeAsText("frauds/TooManyIpsEvents-" + eventStream.name, writeMode = WriteMode.OVERWRITE).setParallelism(1)
 
         processedEvents.filter(_._3 <= maxIpsPerUser).map(_._2)
 

@@ -28,7 +28,7 @@ object TooManyClicksDetector {
                 .reduce { (v1, v2) => (v1._1, v1._2 + v2._2) }
         val uid_fraud_clicks = (clicks_by_uid filter (c => (c._2 >= maxClicks))) // in 5 seconds more than 2 clicks, i have seen 4
 
-        uid_fraud_clicks.map(e => e._1).writeAsText("TooManyClicksEvents-" + clicks.name, writeMode = WriteMode.OVERWRITE).setParallelism(1)
+        uid_fraud_clicks.map(e => e._1).writeAsText("frauds/TooManyClicksEvents-" + clicks.name, writeMode = WriteMode.OVERWRITE).setParallelism(1)
         val uid_clean_clicks = clicks_by_uid filter (c => (c._2 < maxClicks))
         uid_clean_clicks.map(x => x._1)
 
