@@ -26,7 +26,7 @@ The main parts of this project are structured as follows:
 
 ## Offline analysis
 **offline_analysis.ipynb** is a python notebook that has been used to analyse a finite stream. We have run a simple flink program for approx. 3h, during which we have collected Kafka clicks and displays, and outputted them into files (test_results/clicks and test_results/displays).
-This analysis has enabled us to extract/notice probable fraudulent patterns, which we have ended up identifying through an online analysis implemented [here](../master/src/main/scala/ClickFraudDetection/README.md)).
+This analysis has enabled us to extract/notice probable fraudulent patterns, which we have ended up identifying through an online analysis implemented [here](../master/src/main/scala/ClickFraudDetection/README.md).
 ## Scala files
 Our implementation can be found in [ClickFraudDetection](../master/src/main/scala/ClickFraudDetection/).
 * **Event** is a class which converts Strings to objects with meaningful properties (eventType, uid, timestamp, ip and impressionId) with the correct types. We work with Streams of Events to simplify our implementation.
