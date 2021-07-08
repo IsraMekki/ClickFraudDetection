@@ -58,10 +58,10 @@ object ClickFraudDetectionJob {
         //val cleanedClicks4 = ClickBeforeDisplayDetector.process(cleanedClicks3, cleanedDisplays3, 5, 2)
 
         val ctr = CTRCalculator().getCTR(cleanedClicks3, displayStream)
-        ctr.writeAsText("CTR_UID_POST_PROCESSING").setParallelism(1)
+        ctr.writeAsText("test_results/CTR_UID_POST_PROCESSING").setParallelism(1)
 
         val ctr_before = CTRCalculator().getCTR(clickStream, displayStream)
-                .writeAsText("CTR_UID_NO_PROCESSING").setParallelism(1)
+                .writeAsText("test_results/CTR_UID_NO_PROCESSING").setParallelism(1)
         env.execute("Click Fraud Detection Job")
     }
 }

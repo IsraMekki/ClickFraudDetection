@@ -37,10 +37,15 @@ Run the main job in
 src/main/scala/ClickFraudDetection/ClickFraudDetectionJob.scala
 ```
 # Results 
+Our principal metric was the CTR by UID. We ran de click fraud detection job for some time (~1h) and printed the CTRs in files (CTR_UID_NO_PROCESSING contains the CTR of the initial clicks and displays streams, and CTR_UID_POST_PROCESSING is the CTR after applying our filters.) We then calculate the average CTR for each file:
 
+| CTR_UID_NO_PROCESSING | CTR_UID_POST_PROCESSING |
+|-----------------------|-------------------------|
+| 0.2                   | 0.2                     |
 
 # What we learnt from this project
 * Introduction to the Pay-Per Click model (PPC)
 * Awareness of the presence of fraud, and the importance of analyzing data to extract fraudulant patterns.
 * Introduction to streaming programming in practice with Kafka and Flink.
 * First experience using Scala
+* Streaming is not easy 😅
