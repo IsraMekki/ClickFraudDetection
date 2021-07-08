@@ -16,9 +16,6 @@ object TooManyClicksDetector {
 
         //with a restrictive time window of 2 seconds and a minimum nb of clicks per uid equal to more or less 3
         //we get some fraudulent clicks
-
-        //Pattern 1 :
-        //on the [[Clicks]] queue, if more than 5 clicks occur from the same [[uid]] dans une tumbling window id.
         val clicks_by_uid: DataStream[(Event, Int)] = clicks
                 .map {
                     (_, 1)
