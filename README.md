@@ -31,9 +31,9 @@ This analysis allowed us to extract probable patterns, which we ended up impleme
 Our implementation can be found in [ClickFraudDetection](../master/src/main/scala/ClickFraudDetection/).
 * **Event** is a class which converts Strings to objects with meaningful properties (eventType, uid, timestamp, ip and impressionId) with the correct types. We work with Streams of Events to simplify our implementation.
 * **WaterMarkAssigner** creates watermarks for event time processing based on timestamps present in the collected stream events.
-* **ClickFraudDetectionJob** main class where the program is launched.
-* **CTRCalculator** allows to calculate the Click Through Rate from clicks and displays streams.
-* **Detectors** contains classes where our filters are implemented. Each class takes as input a (or 2) DataStream(s) of Event and gives as output a DataStream of **cleaned** Events. The fraudulant ones are written into a text file.
+* **ClickFraudDetectionJob** is the main class from where the program can be launched.
+* **CTRCalculator** computes the Click Through Rate from clicks and displays streams.
+* **Detectors** contains classes where our filters are implemented. Each class takes as input a (or 2) DataStream(s) of Event and outputs a DataStream of **cleaned** Events. The fraudulant ones are written into a text file.
 
 # To run this project
 Run the main job in 
@@ -41,15 +41,15 @@ Run the main job in
 src/main/scala/ClickFraudDetection/ClickFraudDetectionJob.scala
 ```
 # Results 
-Our principal metric was the CTR by UID. We ran de click fraud detection job for some time (~1h) and printed the CTRs in files (CTR_UID_NO_PROCESSING contains the CTR of the initial clicks and displays streams, and CTR_UID_POST_PROCESSING is the CTR after applying our filters.) We then calculate the average CTR for each file:
+Our principal metric has been the CTR by UID. We have run the click fraud detection job for some time (~1h) and have outputted the CTRs into files (CTR_UID_NO_PROCESSING contains the CTR of the initial clicks and displays streams, and CTR_UID_POST_PROCESSING contains the CTR after applying our filters). We have then computed the average CTR for each file:
 
 | CTR_UID_NO_PROCESSING | CTR_UID_POST_PROCESSING |
 |-----------------------|-------------------------|
 | 79.33%                | 15.37%                  |
 
-# What we learnt from this project
-* Introduction to the Pay-Per Click model (PPC)
-* Awareness of the presence of fraud, and the importance of analyzing data to extract fraudulant patterns.
+# What we have learned from this project
+* Introduction to the Pay-Per Click model (PPC).
+* Awareness of the presence of fraud, and the importance of analyzing real-time data to extract/notice fraudulent patterns.
 * Introduction to streaming programming in practice with Kafka and Flink.
-* First experience using Scala
+* First experience using Scala.
 * Streaming is not easy 😅
